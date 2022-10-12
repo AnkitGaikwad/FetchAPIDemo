@@ -11,20 +11,50 @@ fetch('https://bloomberg-market-and-financial-news.p.rapidapi.com/news/list?id=t
         return apidata.json();
     })
 	.then( (actualData) => {
-        //console.log(actualData);
         console.log(actualData.modules[2]);
 
         const hdNews = actualData.modules[2];
         const stories = actualData.modules[2].stories;
-        var articles = '';
-        //var articles = JSON.stringify(stories);
-        for (let i = 0; i < actualData.modules[2].stories.length; i++) {
-            articles += actualData.modules[2].stories[i].title + "\n";
-            
-        }
-        console.log(articles);
-        document.getElementById('demo').innerHTML =
-        `bloomberg technology news articles for the topic ${hdNews.id} are as follows: <br>
-        ${articles}`;
+        displayArticle(hdNews, stories);
+        
     })
 	.catch(err => console.error(err));
+
+function displayArticle(hdNews, stories){
+
+    document.getElementById('demo').innerHTML =
+        `bloomberg technology news articles for the topic ${hdNews.id} are as follows: <br>`;
+
+    for (let i = 0; i < stories.length; i++) {
+
+        const imageArticle = document.createElement("img");
+        imageArticle.src = stories[i].image;
+        imageArticle.height = '60';
+        document.querySelector('#demo').appendChild(imageArticle);
+
+        const title = document.createElement("p");
+        title.innerHTML = stories[i].title;
+        document.querySelector('#demo').appendChild(title);
+
+        const abstract = document.createElement("p");
+        let abstractTemp = "";
+        for (let j = 0; j < stories[i].abstract.length; j++) {
+            abstractTemp += stories[i].abstract[j] + ". ";
+        }
+
+        abstract.innerHTML = abstractTemp;
+        document.querySelector('#demo').appendChild(abstract);
+
+        const newsLink = document.createElement("p");
+        newsLink.innerHTML = `More details available at: <br> `;
+        document.querySelector('#demo').appendChild(newsLink);
+
+        const linkURL = document.createElement("a");
+        linkURL.href = stories[i].longURL;
+        linkURL.innerHTML = stories[i].longURL + "<br>";
+        document.querySelector('#demo').appendChild(linkURL);
+        
+    }
+    
+    
+}
